@@ -1,13 +1,14 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
+const cheerio = require('cheerio');
 
 const app = express();
 app.use(cors());
 
 const PORT = process.env.PORT || 10000;
 
-// Ricerca anime con AniList GraphQL (veloce e stabile)
+// Ricerca stabile tramite AniList GraphQL (senza dipendere da Consumet)
 app.get('/api/search', async (req, res) => {
   const query = req.query.q;
   if (!query) return res.status(400).json({ error: 'Manca la query di ricerca' });
@@ -41,10 +42,7 @@ app.get('/api/search', async (req, res) => {
         variables: { search: query }
       },
       {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         timeout: 8000
       }
     );
@@ -61,27 +59,22 @@ app.get('/api/search', async (req, res) => {
 
     return res.json({ data: results });
   } catch (err) {
-    console.error('Errore ricerca AniList:', err.message);
-    return res.status(500).json({ error: 'Errore nella ricerca anime', details: err.message });
+    console.error('Errore ricerca:', err.message);
+    return res.status(500).json({ error: 'Errore nella ricerca', details: err.message });
   }
 });
 
-// Endpoint per la riproduzione video (utilizza i server embed vidsrc v2)
+// Endpoint di streaming pulito basato su embed universali ad alta compatibilità
 app.get('/api/watch', async (req, res) => {
   const { id, ep } = req.query;
   if (!id || !ep) return res.status(400).json({ error: 'Parametri mancanti' });
 
-  // Utilizziamo AutoEmbed, che risolve automaticamente i flussi video senza schermate nere
-  const streamUrl = `https://player.autoembed.cc/embed/anime/${id}/${ep}`;
+  // Restituisce un URL di streaming diretto ottimizzato per player HTML5 / iframe protetti
+  const streamUrl = `https://vidsrc.cc/v2/embed/anime/${id}/${ep}`;
 
   return res.json({ streamUrl });
 });
 
-// Avvio del server
-try {
-  app.listen(PORT, () => {
-    console.log(`Server avviato correttamente sulla porta ${PORT}`);
-  });
-} catch (err) {
-  console.error('Errore critico durante l\'avvio del server:', err);
-}
+app.listen(PORT, () => {
+  console.log(`Server attivo sulla porta ${PORT}`);
+});
