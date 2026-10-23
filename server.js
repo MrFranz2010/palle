@@ -57,13 +57,12 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
-// Nuovo servizio di streaming integrato (AutoEmbed Player)
 app.get('/api/watch', async (req, res) => {
   const { id, ep } = req.query;
   if (!id || !ep) return res.status(400).json({ error: 'Parametri mancanti' });
 
-  // Utilizziamo embed.su, un player alternativo che gestisce l'embed via iframe in modo più permissivo
-  const streamUrl = `https://embed.su/embed/anime/${id}/${ep}`;
+  // Multiembed supporta l'incorporamento diretto ed evita i problemi di domini inesistenti
+  const streamUrl = `https://multiembed.mov/?video_id=${id}&tmdb=1&s=1&e=${ep}`;
 
   return res.json({ streamUrl });
 });
