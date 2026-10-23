@@ -67,16 +67,16 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
-// 2. SCRAPING ANIMEUNITY PER I VIDEO
+// 2. SCRAPING ANIMEUNITY (.co) PER I VIDEO
 app.get('/api/watch', async (req, res) => {
   const { title, ep } = req.query;
   if (!title || !ep) return res.status(400).json({ error: 'Parametri mancanti' });
 
   try {
-    // Cerca l'anime su AnimeUnity
     const searchRes = await axios.get(`https://animeunity.co/api/search?value=${encodeURIComponent(title)}`, {
       headers: { 
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Referer': 'https://animeunity.co/',
         'X-Requested-With': 'XMLHttpRequest'
       },
       timeout: 8000
@@ -90,7 +90,8 @@ app.get('/api/watch', async (req, res) => {
     const anime = animeList[0];
     const episodesRes = await axios.get(`https://animeunity.co/api/anime/${anime.id}/${anime.slug}`, {
       headers: { 
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Referer': `https://animeunity.co/anime/${anime.id}-${anime.slug}`,
         'X-Requested-With': 'XMLHttpRequest'
       },
       timeout: 8000
@@ -106,15 +107,10 @@ app.get('/api/watch', async (req, res) => {
     });
 
   } catch (err) {
-    console.error('Errore scraping:', err.message);
-    // Stream di fallback in caso di blocchi/CORS diretti dal video
+    console.error('Errore scraping AnimeUnity:', err.message);
     return res.json({ 
       streamUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
       error: err.message
     });
   }
-});
-
-app.listen(PORT, () => {
-  console.log(`Server attivo sulla porta ${PORT}`);
 });
