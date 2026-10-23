@@ -68,7 +68,9 @@ app.get('/api/watch', async (req, res) => {
   const { id, ep } = req.query;
   if (!id || !ep) return res.status(400).json({ error: 'Parametri mancanti' });
 
-  const streamUrl = `https://vidsrc.icu/embed/anime/${id}/${ep}/1`;
+  // Usiamo un dominio di embed alternativo e attivo
+  const streamUrl = `https://vidsrc.to/embed/anime/${id}/${ep}`;
+
   return res.json({ streamUrl });
 });
 
