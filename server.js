@@ -7,6 +7,7 @@ app.use(cors());
 
 const PORT = process.env.PORT || 10000;
 
+// Ricerca anime con AniList GraphQL (veloce e stabile)
 app.get('/api/search', async (req, res) => {
   const query = req.query.q;
   if (!query) return res.status(400).json({ error: 'Manca la query di ricerca' });
@@ -51,6 +52,7 @@ app.get('/api/search', async (req, res) => {
     const mediaList = response.data?.data?.Page?.media || [];
     const results = mediaList.map(item => ({
       mal_id: item.idMal || item.id,
+      anilist_id: item.id,
       title: item.title.english || item.title.romaji || item.title.native,
       images: { jpg: { image_url: item.coverImage.large } },
       episodes: item.episodes || '?',
@@ -64,17 +66,18 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
+// Endpoint per la riproduzione video (utilizza i server embed vidsrc v2)
 app.get('/api/watch', async (req, res) => {
   const { id, ep } = req.query;
   if (!id || !ep) return res.status(400).json({ error: 'Parametri mancanti' });
 
-  // Usiamo un dominio di embed alternativo e attivo
-  const streamUrl = `https://vidsrc.to/embed/anime/${id}/${ep}`;
+  // Link diretto all'embed v2 stabile
+  const streamUrl = `https://vidsrc.cc/v2/embed/anime/${id}/${ep}`;
 
   return res.json({ streamUrl });
 });
 
-// Avvio protetto del server con cattura degli errori
+// Avvio del server
 try {
   app.listen(PORT, () => {
     console.log(`Server avviato correttamente sulla porta ${PORT}`);
