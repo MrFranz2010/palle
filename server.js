@@ -7,7 +7,7 @@ app.use(cors());
 
 const PORT = process.env.PORT || 10000;
 
-// Ricerca stabile con AniList GraphQL
+// Ricerca anime stabile tramite AniList GraphQL
 app.get('/api/search', async (req, res) => {
   const query = req.query.q;
   if (!query) return res.status(400).json({ error: 'Manca la query di ricerca' });
@@ -57,13 +57,13 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
-// Endpoint di watch configurato con un embed universale stabile
+// Nuovo servizio di streaming integrato (AutoEmbed Player)
 app.get('/api/watch', async (req, res) => {
   const { id, ep } = req.query;
   if (!id || !ep) return res.status(400).json({ error: 'Parametri mancanti' });
 
-  // Utilizziamo l'embed di vidsrc.cc che supporta correttamente l'incorporamento
-  const streamUrl = `https://vidsrc.cc/v2/embed/anime/${id}/${ep}`;
+  // Utilizziamo il player di AutoEmbed che carica correttamente i flussi via iframe
+  const streamUrl = `https://player.autoembed.cc/embed/anime/${id}/${ep}`;
 
   return res.json({ streamUrl });
 });
