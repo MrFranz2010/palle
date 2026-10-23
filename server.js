@@ -1,14 +1,13 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
-const cheerio = require('cheerio');
 
 const app = express();
 app.use(cors());
 
 const PORT = process.env.PORT || 10000;
 
-// Ricerca stabile tramite AniList GraphQL (senza dipendere da Consumet)
+// Ricerca anime stabile tramite AniList GraphQL
 app.get('/api/search', async (req, res) => {
   const query = req.query.q;
   if (!query) return res.status(400).json({ error: 'Manca la query di ricerca' });
@@ -64,13 +63,13 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
-// Endpoint di streaming pulito basato su embed universali ad alta compatibilità
+// Endpoint per la generazione del link embed video
 app.get('/api/watch', async (req, res) => {
   const { id, ep } = req.query;
   if (!id || !ep) return res.status(400).json({ error: 'Parametri mancanti' });
 
-  // Restituisce un URL di streaming diretto ottimizzato per player HTML5 / iframe protetti
-  const streamUrl = `https://vidsrc.cc/v2/embed/anime/${id}/${ep}`;
+  // Link embed ottimizzato per l'incorporamento diretto tramite iframe
+  const streamUrl = `https://vidsrc.to/embed/anime/${id}/${ep}`;
 
   return res.json({ streamUrl });
 });
