@@ -71,8 +71,8 @@ app.get('/api/watch', async (req, res) => {
   const { id, ep } = req.query;
   if (!id || !ep) return res.status(400).json({ error: 'Parametri mancanti' });
 
-  // Link diretto all'embed v2 stabile
-  const streamUrl = `https://vidsrc.cc/v2/embed/anime/${id}/${ep}`;
+  // Utilizziamo AutoEmbed, che risolve automaticamente i flussi video senza schermate nere
+  const streamUrl = `https://player.autoembed.cc/embed/anime/${id}/${ep}`;
 
   return res.json({ streamUrl });
 });
