@@ -59,8 +59,8 @@ app.get('/api/watch', async (req, res) => {
   const { id, ep } = req.query;
   if (!id || !ep) return res.status(400).json({ error: 'Parametri mancanti' });
 
-  // Usiamo un file MP4 diretto per testare l'avvio immediato nel player nativo
-  const streamUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+  // Forziamo un URL MP4 pulito e diretto per assicurarci che parta subito
+  const streamUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4';
 
   return res.json({ streamUrl });
 });
