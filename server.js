@@ -55,14 +55,12 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
-// Endpoint di watch ottimizzato con flussi HLS diretti compatibili col player nativo
 app.get('/api/watch', async (req, res) => {
   const { id, ep } = req.query;
   if (!id || !ep) return res.status(400).json({ error: 'Parametri mancanti' });
 
-  // Forniamo un flusso HLS diretto compatibile con Hls.js all'interno del tag <video>
-  // Puoi testare l'effettiva riproduzione puntando a un manifest HLS valido
-  const streamUrl = `https://test-streams.mux.dev/x36xhzz/url_6/193039/index.m3u8`;
+  // Usiamo un file MP4 diretto per testare l'avvio immediato nel player nativo
+  const streamUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
 
   return res.json({ streamUrl });
 });
