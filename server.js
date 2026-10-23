@@ -74,7 +74,7 @@ app.get('/api/watch', async (req, res) => {
 
   try {
     // Cerca l'anime su AnimeUnity
-    const searchRes = await axios.get(`https://animeunity.to/api/search?value=${encodeURIComponent(title)}`, {
+    const searchRes = await axios.get(`https://animeunity.co/api/search?value=${encodeURIComponent(title)}`, {
       headers: { 
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
         'X-Requested-With': 'XMLHttpRequest'
@@ -88,7 +88,7 @@ app.get('/api/watch', async (req, res) => {
     }
 
     const anime = animeList[0];
-    const episodesRes = await axios.get(`https://animeunity.to/api/anime/${anime.id}/${anime.slug}`, {
+    const episodesRes = await axios.get(`https://animeunity.co/api/anime/${anime.id}/${anime.slug}`, {
       headers: { 
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
         'X-Requested-With': 'XMLHttpRequest'
@@ -102,7 +102,7 @@ app.get('/api/watch', async (req, res) => {
     if (!targetEp) throw new Error('Episodio non trovato');
 
     return res.json({ 
-      streamUrl: targetEp.link || `https://animeunity.to/video/${targetEp.id}`
+      streamUrl: targetEp.link || `https://animeunity.co/video/${targetEp.id}`
     });
 
   } catch (err) {
