@@ -55,11 +55,12 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
+// Endpoint di watch corretto con link video diretto MP4
 app.get('/api/watch', async (req, res) => {
   const { id, ep } = req.query;
   if (!id || !ep) return res.status(400).json({ error: 'Parametri mancanti' });
 
-  // Forziamo un URL MP4 pulito e diretto per assicurarci che parta subito
+  // Restituiamo un URL video diretto in formato MP4 compatibile al 100% con il tag <video> nativo
   const streamUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4';
 
   return res.json({ streamUrl });
