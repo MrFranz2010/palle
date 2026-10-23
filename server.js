@@ -68,8 +68,8 @@ app.get('/api/watch', async (req, res) => {
   const { id, ep } = req.query;
   if (!id || !ep) return res.status(400).json({ error: 'Parametri mancanti' });
 
-  // Link embed ottimizzato per l'incorporamento diretto tramite iframe
-  const streamUrl = `https://vidsrc.to/embed/anime/${id}/${ep}`;
+  // Utilizziamo VidLink che accetta direttamente l'ID AniList e fornisce un player iframe stabile
+  const streamUrl = `https://vidlink.pro/anime/${id}/${ep}`;
 
   return res.json({ streamUrl });
 });
