@@ -62,8 +62,8 @@ app.get('/api/watch', async (req, res) => {
   const { id, ep } = req.query;
   if (!id || !ep) return res.status(400).json({ error: 'Parametri mancanti' });
 
-  // Utilizziamo il player di AutoEmbed che carica correttamente i flussi via iframe
-  const streamUrl = `https://player.autoembed.cc/embed/anime/${id}/${ep}`;
+  // Utilizziamo embed.su, un player alternativo che gestisce l'embed via iframe in modo più permissivo
+  const streamUrl = `https://embed.su/embed/anime/${id}/${ep}`;
 
   return res.json({ streamUrl });
 });
