@@ -7,7 +7,6 @@ app.use(cors());
 
 const PORT = process.env.PORT || 10000;
 
-// 1. RICERCA ANIME (AniList GraphQL - Nessun blocco 429)
 app.get('/api/search', async (req, res) => {
   const query = req.query.q;
   if (!query) return res.status(400).json({ error: 'Manca la query di ricerca' });
@@ -50,8 +49,6 @@ app.get('/api/search', async (req, res) => {
     );
 
     const mediaList = response.data?.data?.Page?.media || [];
-    
-    // Mappiamo la risposta nel formato che si aspetta il frontend
     const results = mediaList.map(item => ({
       mal_id: item.idMal || item.id,
       title: item.title.english || item.title.romaji || item.title.native,
@@ -67,50 +64,19 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
-// 2. SCRAPING ANIMEUNITY (.co) PER I VIDEO
 app.get('/api/watch', async (req, res) => {
-  const { title, ep } = req.query;
-  if (!title || !ep) return res.status(400).json({ error: 'Parametri mancanti' });
+  const { id, ep } = req.query;
+  if (!id || !ep) return res.status(400).json({ error: 'Parametri mancanti' });
 
-  try {
-    const searchRes = await axios.get(`https://animeunity.co/api/search?value=${encodeURIComponent(title)}`, {
-      headers: { 
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        'Referer': 'https://animeunity.co/',
-        'X-Requested-With': 'XMLHttpRequest'
-      },
-      timeout: 8000
-    });
-
-    const animeList = searchRes.data.data || searchRes.data;
-    if (!animeList || animeList.length === 0) {
-      throw new Error('Anime non trovato su AnimeUnity');
-    }
-
-    const anime = animeList[0];
-    const episodesRes = await axios.get(`https://animeunity.co/api/anime/${anime.id}/${anime.slug}`, {
-      headers: { 
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        'Referer': `https://animeunity.co/anime/${anime.id}-${anime.slug}`,
-        'X-Requested-With': 'XMLHttpRequest'
-      },
-      timeout: 8000
-    });
-
-    const episodes = episodesRes.data.episodes || [];
-    const targetEp = episodes.find(e => String(e.num) === String(ep)) || episodes[ep - 1];
-
-    if (!targetEp) throw new Error('Episodio non trovato');
-
-    return res.json({ 
-      streamUrl: targetEp.link || `https://animeunity.co/video/${targetEp.id}`
-    });
-
-  } catch (err) {
-    console.error('Errore scraping AnimeUnity:', err.message);
-    return res.json({ 
-      streamUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-      error: err.message
-    });
-  }
+  const streamUrl = `https://vidsrc.icu/embed/anime/${id}/${ep}/1`;
+  return res.json({ streamUrl });
 });
+
+// Avvio protetto del server con cattura degli errori
+try {
+  app.listen(PORT, () => {
+    console.log(`Server avviato correttamente sulla porta ${PORT}`);
+  });
+} catch (err) {
+  console.error('Errore critico durante l\'avvio del server:', err);
+}
